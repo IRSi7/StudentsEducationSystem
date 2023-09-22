@@ -4,15 +4,22 @@ import java.util.ArrayList;
 
 public class Student {
 
-    String Name;
-    EduProgram eduProgram;
-    ArrayList<Integer> eduMarks;
-    int programProgress;
+    public String name;
+    public int eduPlanId;
+    public ArrayList<Integer> eduMarks;
+    public int programProgress;
 
-    public Student(String name, EduProgram eduProgram, ArrayList<Integer> eduMarks, int programProgress) {
-        Name = name;
-        this.eduProgram = eduProgram;
+    public Student(String name, int eduPlanId, ArrayList<Integer> eduMarks, int programProgress) {
+        this.name = name;
+        this.eduPlanId = eduPlanId;
         this.eduMarks = eduMarks;
         this.programProgress = programProgress;
+    }
+
+    public Student(String name, int eduPlanId) {
+        this.name = name;
+        this.eduPlanId = eduPlanId;
+        this.eduMarks = new ArrayList<>();
+        this.programProgress = 0;
     }
 }

@@ -2,8 +2,8 @@ package space.irsi7.models;
 
 public class Theme {
 
-    String name;
-    int hours;
+    public String name;
+    public int hours;
 
     public Theme(int hours, String name) {
         this.name = name;

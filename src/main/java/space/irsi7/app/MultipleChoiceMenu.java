@@ -1,25 +1,32 @@
 package space.irsi7.app;
 
-import space.irsi7.interfaces.Menu;
-
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
-public class NumericMenu implements Menu {
+public class MultipleChoiceMenu {
     private final ArrayList<String> listChoice;
-    NumericMenu(ArrayList<String> list){
-        this.listChoice = list;
+    MultipleChoiceMenu(List<String> list){
+        this.listChoice = new ArrayList<>(list);
     }
-    @Override
-    public void printMenu() {
+
+    public int chooseOne() {
+        int choosen = 0;
+        while(choosen == 0){
+            printMenu();
+            printInstruction();
+            choosen = readChoice();
+        }
+        return choosen;
+    }
+
+    private void printMenu(){
         for( int i = 1; i <= listChoice.size(); i++){
             System.out.println(i + "). " + listChoice.get(i - 1));
         }
-        while(readChoice() == 0);
     }
 
-    @Override
-    public int readChoice() {
+    private int readChoice() {
         printInstruction();
         Scanner in = new Scanner(System.in);
         String choice = in.nextLine();
@@ -27,15 +34,14 @@ public class NumericMenu implements Menu {
             if(validateChoice(choice)){
                 return  Integer.parseInt(choice);
             } else {
-                return 0;
+                return -0;
             }
         } catch (NumberFormatException nE){
             return 0;
         }
     }
 
-    @Override
-    public boolean validateChoice(String choice) {
+    private boolean validateChoice(String choice) {
         int intChoice = Integer.parseInt(choice);
         return intChoice > 0 & intChoice <= listChoice.size();
     }
