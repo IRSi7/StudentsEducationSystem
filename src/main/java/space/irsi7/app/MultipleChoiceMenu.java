@@ -14,7 +14,6 @@ public class MultipleChoiceMenu {
         int choosen = 0;
         while(choosen == 0){
             printMenu();
-            printInstruction();
             choosen = readChoice();
         }
         return choosen;

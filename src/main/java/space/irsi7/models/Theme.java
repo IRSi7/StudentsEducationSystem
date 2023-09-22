@@ -9,4 +9,25 @@ public class Theme {
         this.name = name;
         this.hours = hours;
     }
+
+    public Theme(){
+        this.name = null;
+        this.hours = 0;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getHours() {
+        return hours;
+    }
+
+    public void setHours(int hours) {
+        this.hours = hours;
+    }
 }

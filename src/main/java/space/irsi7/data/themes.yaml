@@ -1,12 +1,13 @@
 ---
-themes:
   - name: "Spring"
     hours: 2
   - name: "Java"
     hours: 3
   - name: "Kotlin"
     hours: 1
-  - name: "Maven\Gradle"
+  - name: "Maven"
+    hours: 3
+  - name: "Gradle"
     hours: 3
   - name: "Docker"
     hours: 4

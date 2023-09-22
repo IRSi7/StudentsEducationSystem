@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) throws IllegalInitialDataException {
+    public static void main(String[] args) throws IllegalInitialDataException, IOException {
         //initTest();
         Repository repository = new Repository();
         Scanner in = new Scanner(System.in);
@@ -24,12 +24,48 @@ public class Main {
                 name = in.nextLine();
                 System.out.println("Введите порядковый номер учебной программы");
                 eduId = in.nextInt();
-                if(repository.addStudent(new Student(name, eduId))){
-                    System.out.println("Операция прошла успешно");
+
+                repository.addStudent(new Student(name, eduId));
+            }
+            case(2):{
+                int studentId;
+                System.out.println("Введите порядковый номер студента");
+                studentId = in.nextInt();
+
+                repository.removeStudent(studentId);
+
+                break;
+            }
+            case(3):{
+                int studentId;
+                int mark;
+                System.out.println("Введите порядковый номер студента");
+                studentId = in.nextInt();
+                System.out.println("Введите оценку за последний тест");
+                mark = in.nextInt();
+
+                repository.rateStudent(studentId, mark);
+
+                break;
+            }
+            case(4):{
+                int studentId;
+                int answer;
+                System.out.println("Введите порядковый номер студента");
+                studentId = in.nextInt();
+                answer = repository.getEduTimeLeft(studentId);
+                if(answer != -1){
+                    System.out.println("Выбранному студенту осталось учиться " + answer + " дней");
                 } else {
-                    System.out.println("Неправильный номер образовательной программы");
+
                 }
                 break;
+            }
+            case(5):{
+                int studentId;
+                System.out.println("Введите порядковый номер студента");
+                studentId = in.nextInt();
+                System.out.println(repository.getReportStudent(studentId));
             }
         }
     }
@@ -44,13 +80,13 @@ public class Main {
                 "Рассчитать возможность отчисления",
                 "Вывести список студентов"));
 
-        private final List elements;
+        private final List<String> elements;
 
-        MenuS(List elements) {
+        MenuS(List<String> elements) {
             this.elements = elements;
         }
 
-        public List getPath() {
+        public List<String> getPath() {
             return elements;
         }
 
@@ -89,8 +125,8 @@ public class Main {
         };
         ArrayList<Student> studentArrayList = new ArrayList<>() {
             {
-                add(new Student("Roman Ivanov", 1, marks,1));
-                add(new Student("Sasha Zaycev", 2, marks,2));
+                add(new Student("Roman Ivanov", 1, marks));
+                add(new Student("Sasha Zaycev", 2, marks));
             }
         };
         yamlDAO.writeYAML(studentArrayList, Paths.STUDENTS.path);
