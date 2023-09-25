@@ -2,13 +2,12 @@ package space.irsi7.repository;
 
 import space.irsi7.IllegalInitialDataException;
 import space.irsi7.dao.YamlDAO;
+import space.irsi7.interfaces.CustomPair;
 import space.irsi7.models.EduPlan;
 import space.irsi7.models.Student;
 import space.irsi7.models.Theme;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static java.lang.Math.round;
 
@@ -43,7 +42,7 @@ public class Repository {
 
     public void removeStudent(int id){
         if(validateStudId(id)){
-            this.students.remove(id-1);
+            this.students.remove(id);
             notifyChanges();
             System.out.println("Операция прошла успешно");
         } else {
@@ -73,8 +72,9 @@ public class Repository {
 
     public int getEduTimeLeft(int studentId){
         if(validateStudId(studentId)) {
-            int passed = students.get(studentId).eduMarks.size();
-            int all = eduPlans.get(students.get(studentId).eduPlanId).themesId.size();
+            Student curStudent = students.get(studentId);
+            int passed = curStudent.eduMarks.size();
+            int all = eduPlans.get(curStudent.eduPlanId - 1).themesId.size();
             return (all - passed);
         } else {
             return -1;
@@ -82,7 +82,7 @@ public class Repository {
     }
 
     public String getReportStudent(int studId){
-        Student curStudent = students.get(studId - 1);
+        Student curStudent = students.get(studId);
         EduPlan curEduPlan = eduPlans.get(curStudent.eduPlanId - 1);
         StringBuilder answer = new StringBuilder("---------------------------------------------\n");
         answer.append("Студент : ")
@@ -104,74 +104,97 @@ public class Repository {
         return answer.toString();
     }
 
-    public String getDropChance(int gpa){
-        if(gpa >= 75){
-            return "Низкая вероятность быть отчисленным";
-        } else {
-            return "Высокая вероятность быть отчисленным";
-        }
+    public Boolean getDropChance(int gpa){
+        return (gpa >= 75);
     }
 
     public String getInfoStudent(int studId){
-        Student curStudent = students.get(studId - 1);
+        Student curStudent = students.get(studId);
         int curGPA = getGPA(studId);
-        String answer = studId + "). | Студент : " + curStudent.name
+        return " ID : " + (studId + 1) + " | Студент : " + curStudent.name
                 + " | Кол-во сданных тестов : " + curStudent.eduMarks.size()
                 + " | Дни до конца обучения : " + getEduTimeLeft(studId)
                 + " | Средний балл : " + curGPA
-                + " | Оценка успеваемости : " + getDropChance(curGPA);
+                + " | Оценка успеваемости : "
+                + ((curGPA >= 75) ? "Низкая вероятность быть отчисленным" : "Высокая вероятность быть отчисленным");
+    }
+
+    public boolean filerByGPA(int filter, int studId){
+        return switch (filter) {
+            case (2) -> getDropChance(getGPA(studId));
+            case (3) -> !getDropChance(getGPA(studId));
+            default -> true;
+        };
+    }
+
+    public ArrayList<String> getAllReport(int mode, int order, int filter){
+        ArrayList sortArray;
+        ArrayList<String> answer = new ArrayList<>();
+
+        switch (mode) {
+            case(1): {
+                for (int i = 0; i < students.size(); i++) {
+                    answer.add(getInfoStudent(i + 1));
+                }
+                return answer;
+            }
+            case(2): {
+                sortArray = new ArrayList<CustomPair<Integer, String>>();
+                break;
+            }
+//            case(5): {
+//                sortArray = new ArrayList<CustomPair<Integer, Boolean>>();
+//                break;
+//            }
+            default: {
+                sortArray = new ArrayList<CustomPair<Integer, Integer>>();
+                break;
+            }
+        }
+
+        for (int i = 0; i < students.size(); i++) {
+            Student curStudent = students.get(i);
+            switch (mode){
+                case(2): {
+                    if(filerByGPA(filter, i)) {
+                        sortArray.add(new CustomPair<>(i, curStudent.name));
+                    }
+                    break;
+                }
+                case(3): {
+                    if(filerByGPA(filter, i)) {
+                        sortArray.add(new CustomPair<>(i, curStudent.eduMarks.size()));
+                    }
+                    break;
+                }
+                case(4): {
+                    if(filerByGPA(filter, i)) {
+                        sortArray.add(new CustomPair<>(i, getEduTimeLeft(i)));
+                    }
+                    break;
+                }
+                case(5): {
+                    if(filerByGPA(filter, i)) {
+                        sortArray.add(new CustomPair<>(i, getGPA(i)));
+                    }
+                    break;
+                }
+                default:
+                    break;
+            }
+
+        }
+        sortArray.stream().sorted().forEach(
+                it -> answer.add(
+                        getInfoStudent((int) ( (CustomPair<?, ?>) it).getFirst())));
+        if(order == 2){
+            Collections.reverse(answer);
+        }
         return answer;
     }
 
-//    public ArrayList<String> getAllReport(int mode){
-//        Map sortMap;
-//        switch (mode) {
-//            case(1): {
-//                sortMap = new HashMap<Integer, String >();
-//                break;
-//            }
-//            case(5): {
-//                sortMap = new HashMap<Integer, Boolean>();
-//                break;
-//            }
-//            default: {
-//                sortMap = new HashMap<Integer, Integer>();
-//                break;
-//            }
-//        }
-//
-//        for (int i = 0; i < students.size(); i++) {
-//            Student curStudent = students.get(i);
-//            String string = getInfoStudent(i + 1);
-//            switch (mode){
-//                case(1): {
-//                    sortMap.put(curStudent.name, string);
-//                    break;
-//                }
-//                case(2): {
-//                    sortMap.put(curStudent.eduMarks.size(), string);
-//                    break;
-//                }
-//                case(3): {
-//                    sortMap.put(getEduTimeLeft(i + 1), string);
-//                    break;
-//                }
-//                case(4): {
-//                    sortMap.put(getGPA(i + 1), string);
-//                    break;
-//                }
-//                case(5): {
-//                    sortMap.put(getGPA(i + 1) >= 75, string);
-//                    break;
-//                }
-//            }
-//        }
-//
-//        sortMap.keySet();
-//    }
-
     public int getGPA(int studId) {
-        Student curStudent = students.get(studId - 1);
+        Student curStudent = students.get(studId);
         if(!curStudent.eduMarks.isEmpty()) {
             int sum = 0;
             for (int i = 0; i < curStudent.eduMarks.size(); i++) {
@@ -184,7 +207,7 @@ public class Repository {
     }
 
     public boolean validateStudId(int studentId){
-        return studentId > 0 && studentId <= students.size();
+        return studentId >= 0 && studentId < students.size();
     }
     enum Paths{
         STUDENTS("C:\\Users\\rsivanov\\IdeaProjects\\StudentsEducationSystem\\src\\main\\java\\space\\irsi7\\data\\students.yaml"),

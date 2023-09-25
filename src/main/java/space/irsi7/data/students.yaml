@@ -12,3 +12,13 @@
   - 5
   - 5
   - 5
+- name: "Vlad Neglad"
+  eduPlanId: 2
+  eduMarks:
+  - 80
+  - 95
+  - 75
+- name: "Stepan Smit"
+  eduPlanId: 1
+  eduMarks:
+  - 40
