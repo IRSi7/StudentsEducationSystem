@@ -1,18 +1,22 @@
-package space.irsi7.app;
+package space.irsi7.controllers;
+
+import space.irsi7.enums.MenuEnum;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class MultipleChoiceMenu {
-    private final ArrayList<String> listChoice;
-    MultipleChoiceMenu(List<String> list){
-        this.listChoice = new ArrayList<>(list);
+
+
+    private final MenuEnum[] listChoice;
+    MultipleChoiceMenu(MenuEnum[] list){
+        this.listChoice = list;
     }
 
     public int chooseOne() {
-        int choosen = 0;
-        while(choosen == 0){
+        int choosen = -1;
+        while(choosen == -1){
             printMenu();
             choosen = readChoice();
         }
@@ -20,8 +24,8 @@ public class MultipleChoiceMenu {
     }
 
     private void printMenu(){
-        for( int i = 1; i <= listChoice.size(); i++){
-            System.out.println(i + "). " + listChoice.get(i - 1));
+        for( int i = 1; i <= listChoice.length; i++){
+            System.out.println(i + "). " + listChoice[i - 1].getMessage());
         }
     }
 
@@ -31,21 +35,21 @@ public class MultipleChoiceMenu {
         String choice = in.nextLine();
         try {
             if(validateChoice(choice)){
-                return  Integer.parseInt(choice);
+                return  listChoice[Integer.parseInt(choice) - 1].ordinal();
             } else {
-                return -0;
+                return -1;
             }
         } catch (NumberFormatException nE){
-            return 0;
+            return -1;
         }
     }
 
     private boolean validateChoice(String choice) {
         int intChoice = Integer.parseInt(choice);
-        return intChoice > 0 & intChoice <= listChoice.size();
+        return intChoice > 0 & intChoice <= listChoice.length;
     }
 
     private void printInstruction(){
-        System.out.println("Введите число от 1 до " + listChoice.size());
+        System.out.println("Введите число от 1 до " + listChoice.length);
     }
 }

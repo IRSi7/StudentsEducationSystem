@@ -1,24 +1,32 @@
 ---
-- name: "Roman Ivanov"
+- id: 1
+  name: "Roman Ivanov"
   eduPlanId: 1
   eduMarks:
   - 4
   - 5
   - 5
-- name: "Sasha Zaycev"
+- id: 2
+  name: "Sasha Zaycev"
   eduPlanId: 2
   eduMarks:
   - 4
   - 5
   - 5
   - 5
-- name: "Vlad Neglad"
+- id: 3
+  name: "Vlad Neglad"
   eduPlanId: 2
   eduMarks:
   - 80
   - 95
   - 75
-- name: "Stepan Smit"
+- id: 4
+  name: "Stepan Smit"
   eduPlanId: 1
   eduMarks:
   - 40
+- id: 5
+  name: "John Smit"
+  eduPlanId: 1
+  eduMarks: []
