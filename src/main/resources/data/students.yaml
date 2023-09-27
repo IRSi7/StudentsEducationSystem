@@ -6,6 +6,7 @@
   - 4
   - 5
   - 5
+  gpa: 5
 - id: 2
   name: "Sasha Zaycev"
   eduPlanId: 2
@@ -14,6 +15,7 @@
   - 5
   - 5
   - 5
+  gpa: 5
 - id: 3
   name: "Vlad Neglad"
   eduPlanId: 2
@@ -21,12 +23,15 @@
   - 80
   - 95
   - 75
+  gpa: 83
 - id: 4
   name: "Stepan Smit"
   eduPlanId: 1
   eduMarks:
   - 40
+  gpa: 40
 - id: 5
   name: "John Smit"
   eduPlanId: 1
   eduMarks: []
+  gpa: 0

@@ -18,6 +18,54 @@ public class Student {
     public ArrayList<Integer> eduMarks;
     public int gpa;
 
+    public static int getCount() {
+        return count;
+    }
+
+    public static void setCount(int count) {
+        Student.count = count;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getEduPlanId() {
+        return eduPlanId;
+    }
+
+    public void setEduPlanId(int eduPlanId) {
+        this.eduPlanId = eduPlanId;
+    }
+
+    public ArrayList<Integer> getEduMarks() {
+        return eduMarks;
+    }
+
+    public void setEduMarks(ArrayList<Integer> eduMarks) {
+        this.eduMarks = eduMarks;
+    }
+
+    public int getGpa() {
+        return gpa;
+    }
+
+    public void setGpa(int gpa) {
+        this.gpa = gpa;
+    }
+
     public Student(String name, int eduPlanId, ArrayList<Integer> eduMarks, int gpa) {
 
         this.name = name;

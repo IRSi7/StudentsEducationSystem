@@ -5,8 +5,8 @@ import space.irsi7.exceptions.IllegalInitialDataException;
 import space.irsi7.dao.YamlDAO;
 import space.irsi7.enums.LogsEnum;
 import space.irsi7.enums.PathsEnum;
-import space.irsi7.interfaces.CustomPair;
-import space.irsi7.models.EduPlan;
+import space.irsi7.models.Config;
+import space.irsi7.models.Course;
 import space.irsi7.models.Student;
 import space.irsi7.models.Theme;
 
@@ -18,26 +18,32 @@ import static java.lang.Math.round;
 //Только инициализирует
 public class Repository {
 
-    ArrayList<Student> students;
-    ArrayList<EduPlan> eduPlans;
-    ArrayList<Theme> themes;
+    Config config;
+    Map<Integer, Student> students;
+    Map<Integer, Course> courses;
+    Map<Integer, Theme> themes;
     YamlDAO yamlDAO;
 
     public Repository() throws IllegalInitialDataException {
         this.yamlDAO = new YamlDAO();
+        //            students = yamlDAO.readYamlStudents(PathsEnum.STUDENTS.getPath());
+//            courses = yamlDAO.readYamlEduPlans(PathsEnum.EDUPLANS.getPath());
+//            themes = yamlDAO.readYamlThemes(PathsEnum.THEMES.getPath());
         try {
             students = yamlDAO.readYamlStudents(PathsEnum.STUDENTS.getPath());
-            eduPlans = yamlDAO.readYamlEduPlans(PathsEnum.EDUPLANS.getPath());
-            themes = yamlDAO.readYamlThemes(PathsEnum.THEMES.getPath());
+            config = yamlDAO.readYamlConfig(PathsEnum.CONFIG.getPath());
+            themes = config.getThemesMap();
+            courses = config.getCoursesMap();
             System.out.println("Успешно");
         } catch (IOException e) {
-            throw new IllegalInitialDataException("Ошибка при чтении из YAML");
+            throw new RuntimeException(e);
         }
     }
 
     public void addStudent(Student student) {
-        if (student.eduPlanId > 0 && student.eduPlanId <= eduPlans.size()) {
-            this.students.add(student);
+        if (student.eduPlanId > 0 && student.eduPlanId <= courses.size()) {
+            // TODO: Добавить индексацию
+            this.students.put(0 ,student);
             notifyChanges();
         } else {
             System.out.println(LogsEnum.FAIL.getMessage());
@@ -64,7 +70,7 @@ public class Repository {
 
     private void notifyChanges() {
         try {
-            yamlDAO.writeYAML(students, PathsEnum.STUDENTS.getPath());
+            yamlDAO.writeYAML(students.values(), PathsEnum.STUDENTS.getPath());
             System.out.println(LogsEnum.SUCCESS.getMessage());
         } catch (IOException e) {
             System.out.println(LogsEnum.FAIL.getMessage());
@@ -75,7 +81,7 @@ public class Repository {
         if (validateStudId(studentId)) {
             Student curStudent = students.get(studentId);
             int passed = curStudent.eduMarks.size();
-            int all = eduPlans.get(curStudent.eduPlanId - 1).themesId.size();
+            int all = courses.get(curStudent.eduPlanId - 1).getThemesId().size();
             return (all - passed);
         } else {
             return -1;
@@ -84,13 +90,13 @@ public class Repository {
 
     public int getEduTimeLeft(Student student) {
         int passed = student.eduMarks.size();
-        int all = eduPlans.get(student.eduPlanId - 1).themesId.size();
+        int all = courses.get(student.eduPlanId - 1).getThemesId().size();
         return (all - passed);
     }
 
     public String getReportStudent(int studId) {
         Student curStudent = students.get(studId);
-        EduPlan curEduPlan = eduPlans.get(curStudent.eduPlanId - 1);
+        Course curCourse = courses.get(curStudent.eduPlanId - 1);
         StringBuilder answer = new StringBuilder("---------------------------------------------\n");
         answer.append("Студент : ")
                 .append(curStudent.name)
@@ -101,7 +107,7 @@ public class Repository {
             sum += curStudent.eduMarks.get(i);
             answer.append("\t").append(i + 1)
                     .append(". | Тема: ")
-                    .append(themes.get(curEduPlan.themesId.get(i)).getName())
+                    //.append(themes.get(curCourse.themesId.get(i)).getName())
                     .append(" | Оценка: ")
                     .append(curStudent.eduMarks.get(i))
                     .append(" |\n");
@@ -157,7 +163,7 @@ public class Repository {
 
         ArrayList<String> answer = new ArrayList<>();
 
-        students.stream()
+        students.values().stream()
                 .filter( s -> filterByGPA(filter, s))
                 .sorted((Student s, Student s1) -> {
                     if(sort == MenuEnum.SORT_ID.ordinal()){
