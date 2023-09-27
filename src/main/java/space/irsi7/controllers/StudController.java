@@ -3,12 +3,10 @@ package space.irsi7.controllers;
 import org.yaml.snakeyaml.Yaml;
 import space.irsi7.enums.MenuEnum;
 import space.irsi7.exceptions.IllegalInitialDataException;
-import space.irsi7.dao.YamlDAO;
 import space.irsi7.models.Config;
 import space.irsi7.models.Course;
-import space.irsi7.models.Student;
 import space.irsi7.models.Theme;
-import space.irsi7.repository.Repository;
+import space.irsi7.services.StudentService;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -17,11 +15,11 @@ import java.util.Scanner;
 
 public class StudController {
 
-    static Repository repository;
+    static StudentService studentService;
 
     static {
         try {
-            repository = new Repository();
+            studentService = new StudentService();
         } catch (IllegalInitialDataException e) {
             throw new RuntimeException(e);
         }
@@ -30,6 +28,8 @@ public class StudController {
     static Scanner in = new Scanner(System.in);
 
     public static boolean start() {
+
+        // TODO: Спросить насчёт new MenuEnum[]
         MultipleChoiceMenu multipleChoiceMenu = new MultipleChoiceMenu(new MenuEnum[]{
                 MenuEnum.MAIN_ADD, MenuEnum.MAIN_REMOVE, MenuEnum.MAIN_RATE, MenuEnum.MAIN_TIME_LEFT,
                 MenuEnum.MAIN_DROP_CHANCE, MenuEnum.MAIN_REPORT_ONE, MenuEnum.MAIN_REPORT_ALL
@@ -68,53 +68,36 @@ public class StudController {
         name = in.nextLine();
         System.out.println("Введите порядковый номер учебной программы");
         eduId = in.nextInt();
-
-        repository.addStudent(new Student(name, eduId));
+        studentService.addStudent(name, eduId);
     }
 
     public static void remove(){
-        int studentId;
-        System.out.println("Введите порядковый номер студента");
-        studentId = in.nextInt();
-        repository.removeStudent(studentId - 1);
+        int studentId = getStudId();
+        studentService.removeStudent(studentId);
     }
 
     public static void rate(){
-        int studentId;
         int mark;
-        System.out.println("Введите порядковый номер студента");
-        studentId = in.nextInt();
+        int studentId = getStudId();
         System.out.println("Введите оценку за последний тест");
         mark = in.nextInt();
-
-        repository.rateStudent(studentId - 1, mark);
+        studentService.rateStudent(studentId, mark);
     }
 
     public static void time(){
-        int studentId;
-        int answer;
-        System.out.println("Введите порядковый номер студента");
-        studentId = in.nextInt();
-        answer = repository.getEduTimeLeft(studentId - 1);
-        if (answer != -1) {
-            System.out.println("Выбранному студенту осталось учиться " + answer + " дней");
-        } else {
-            System.out.println("Error in data");
-        }
+        int studentId = getStudId();
+        System.out.println("Выбранному студенту осталось учиться "
+                + studentService.getEduTimeLeft(studentId) + " дней");
     }
 
     public static void report(){
-        int studentId;
-        System.out.println("Введите порядковый номер студента");
-        studentId = in.nextInt();
-        System.out.println(repository.getReportStudent(studentId - 1));
+        int studentId = getStudId();
+        System.out.println(studentService.getReportStudent(studentId));
     }
 
     public static void possibility(){
-        int studentId;
-        System.out.println("Введите ID студента");
-        studentId = in.nextInt();
-        if (repository.getDropChance(repository.getGPA(studentId - 1))) {
+        int studentId = getStudId();
+        if (studentService.getDropChance(studentId)) {
             System.out.println("Низкая вероятность быть отчисленным");
         } else {
             System.out.println("Высокая вероятность быть отчисленным");
@@ -145,11 +128,10 @@ public class StudController {
         int write = multipleChoiceMenu.chooseOne();
 
         if(write == MenuEnum.WRITE_CONSOLE.ordinal()) {
-            ArrayList<String> test =   repository.getAllReport(sort, order, filter);
-            repository.getAllReport(sort, order, filter).forEach(System.out::println);
+            studentService.getAllReport(sort, order, filter).forEach(System.out::println);
         }
         if(write == MenuEnum.WRITE_TXT.ordinal()) {
-            writeToTxt(repository.getAllReport(sort, order, filter));
+            writeToTxt(studentService.getAllReport(sort, order, filter));
         }
     }
 
@@ -159,6 +141,15 @@ public class StudController {
                 MenuEnum.YES, MenuEnum.NO
         });
         return yesNo.chooseOne() == MenuEnum.YES.ordinal();
+    }
+
+    public static int getStudId(){
+        int studentId;
+        do {
+            System.out.println("Введите ID студента");
+            studentId = in.nextInt();
+        } while (!studentService.validateId(studentId));
+        return studentId;
     }
 
     public static void writeToTxt(ArrayList<String> strings){
@@ -177,7 +168,7 @@ public class StudController {
         }
     }
 
-    public static void initTest () throws IOException {
+    public static void initTest () {
 
         ArrayList<Course> courses = new ArrayList<>(){{
             add(new Course(1, new ArrayList<>(List.of(1, 2, 3 , 4, 5, 6, 7, 8, 9, 10))));
@@ -204,37 +195,5 @@ public class StudController {
         Yaml yaml = new Yaml();
         StringWriter writer = new StringWriter();
         yaml.dump(config, writer);
-//        String path = "C:\\Users\\rsivanov\\IdeaProjects\\StudentsEducationSystem\\src\\main\\java\\space\\irsi7\\data\\students.yaml";
-//        YamlDAO yamlDAO = new YamlDAO();
-//        enum Paths {
-//            STUDENTS("C:\\Users\\rsivanov\\IdeaProjects\\StudentsEducationSystem\\src\\main\\java\\space\\irsi7\\data\\students.yaml"),
-//            EDUPLANS("\"C:\\\\Users\\\\rsivanov\\\\IdeaProjects\\\\StudentsEducationSystem\\\\src\\\\main\\\\java\\\\space\\\\irsi7\\\\data\\\\eduplans.yaml\""),
-//            THEMES("\"C:\\\\Users\\\\rsivanov\\\\IdeaProjects\\\\StudentsEducationSystem\\\\src\\\\main\\\\java\\\\space\\\\irsi7\\\\data\\\\themes.yaml\"");
-//
-//            private final String path;
-//
-//            Paths(String path) {
-//                this.path = path;
-//            }
-//
-//            public String getPath() {
-//                return path;
-//            }
-//
-//        }
-//        ArrayList<Integer> marks = new ArrayList<Integer>() {
-//            {
-//                add(4);
-//                add(5);
-//                add(5);
-//            }
-//        };
-//        ArrayList<Student> studentArrayList = new ArrayList<>() {
-//            {
-//                add(new Student("Roman Ivanov", 1, marks));
-//                add(new Student("Sasha Zaycev", 2, marks));
-//            }
-//        };
-//        yamlDAO.writeYAML(studentArrayList, Paths.STUDENTS.path);
     }
 }

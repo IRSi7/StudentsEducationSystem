@@ -1,12 +1,10 @@
 package space.irsi7.models;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Config {
-
     private ArrayList<Course> courses;
 
     private ArrayList<Theme> themes;
@@ -44,12 +42,4 @@ public class Config {
     public Map<Integer, Course> getCoursesMap(){
         return courses.stream().collect(Collectors.toMap(Course::getId, c -> c));
     }
-
-    //    public HashMap<Integer, Course> getCourses() {
-//        return courses;
-//    }
-//
-//    public HashMap<Integer, Theme> getThemes() {
-//        return themes;
-//    }
 }

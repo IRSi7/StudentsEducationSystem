@@ -1,7 +1,12 @@
 package space.irsi7.exceptions;
 
-public class IllegalInitialDataException extends Exception{
-    public IllegalInitialDataException(String message) {
-        super(message);
+import java.io.IOException;
+import java.io.UncheckedIOException;
+
+public class IllegalInitialDataException extends UncheckedIOException {
+
+    public IllegalInitialDataException(IOException cause) {
+        super(cause);
     }
 }
+

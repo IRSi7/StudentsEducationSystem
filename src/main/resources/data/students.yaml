@@ -1,37 +1,36 @@
----
-- id: 1
-  name: "Roman Ivanov"
+- !!space.irsi7.models.Student
+  eduMarks: [4, 5, 5]
   eduPlanId: 1
-  eduMarks:
-  - 4
-  - 5
-  - 5
   gpa: 5
-- id: 2
-  name: "Sasha Zaycev"
+  id: 1
+  name: Roman Ivanov
+- !!space.irsi7.models.Student
+  eduMarks: [4, 5, 5, 5]
   eduPlanId: 2
-  eduMarks:
-  - 4
-  - 5
-  - 5
-  - 5
   gpa: 5
-- id: 3
-  name: "Vlad Neglad"
+  id: 2
+  name: Sasha Zaycev
+- !!space.irsi7.models.Student
+  eduMarks: [80, 95, 75]
   eduPlanId: 2
-  eduMarks:
-  - 80
-  - 95
-  - 75
   gpa: 83
-- id: 4
-  name: "Stepan Smit"
+  id: 3
+  name: Vlad Neglad
+- !!space.irsi7.models.Student
+  eduMarks: [40]
   eduPlanId: 1
-  eduMarks:
-  - 40
   gpa: 40
-- id: 5
-  name: "John Smit"
-  eduPlanId: 1
+  id: 4
+  name: Stepan Smit
+- !!space.irsi7.models.Student
   eduMarks: []
+  eduPlanId: 1
   gpa: 0
+  id: 5
+  name: John Smit
+- !!space.irsi7.models.Student
+  eduMarks: [100, 90]
+  eduPlanId: 2
+  gpa: 95
+  id: 6
+  name: Марк Заславский

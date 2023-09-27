@@ -2,8 +2,6 @@ package space.irsi7.controllers;
 
 import space.irsi7.enums.MenuEnum;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 public class MultipleChoiceMenu {
@@ -15,12 +13,12 @@ public class MultipleChoiceMenu {
     }
 
     public int chooseOne() {
-        int choosen = -1;
-        while(choosen == -1){
+        int chosen = -1;
+        while(chosen == -1){
             printMenu();
-            choosen = readChoice();
+            chosen = readChoice();
         }
-        return choosen;
+        return chosen;
     }
 
     private void printMenu(){

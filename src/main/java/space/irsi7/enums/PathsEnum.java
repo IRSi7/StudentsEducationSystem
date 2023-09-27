@@ -1,7 +1,7 @@
 package space.irsi7.enums;
 
 public enum PathsEnum {
-    STUDENTS("data/students.yaml"),
+    STUDENTS("src/main/resources/data/students.yaml"),
     EDUPLANS("src/main/resources/data/eduplans.yaml"),
     THEMES("src/main/resources/data/themes.yaml"),
 

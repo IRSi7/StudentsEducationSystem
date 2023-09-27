@@ -1,8 +1,5 @@
 package space.irsi7.models;
 
-import java.util.LinkedHashMap;
-import java.util.Objects;
-
 public class Theme {
     private int id;
     private String name;

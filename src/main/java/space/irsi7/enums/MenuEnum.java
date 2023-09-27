@@ -1,7 +1,5 @@
 package space.irsi7.enums;
 
-import java.util.ArrayList;
-
 public enum MenuEnum {
     // Константы главного меню
     MAIN_ADD("Добавить студента"),
@@ -12,8 +10,8 @@ public enum MenuEnum {
     MAIN_REPORT_ONE("Получить отчёт об успеваемости"),
     MAIN_REPORT_ALL("Вывести список студентов"),
 
-    // Константы меню сортировкм
-    SORT_ID("Сортировать по порядку"),
+    // Константы меню сортировки
+    SORT_ID("Сортировать по ID"),
     SORT_NAME("Сортировать по Фамилии и Имени"),
     SORT_TESTS_PASSED("Сортировать по кол-ву сданных тестов"),
     SORT_DAYS_LEFT("Сортировать по кол-ву дней до конца обучения"),
