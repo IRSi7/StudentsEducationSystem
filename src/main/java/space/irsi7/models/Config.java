@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+//TODO: Класс который я сделал, чтобы победить SnakeYaml и Jacson
+//TODO: Record не поддерживается snake и jacson изз-за невозможности создать пустой конструктор.
+//TODO: Спросить предназначен ли YAML для чтения коллекций? (Из того что я нашёл скорее нет)
 public class Config {
     private ArrayList<Course> courses;
 

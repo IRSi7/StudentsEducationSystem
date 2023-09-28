@@ -5,8 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import org.yaml.snakeyaml.Yaml;
-import space.irsi7.models.Config;
+import space.irsi7.exceptions.IllegalInitialDataException;
+import space.irsi7.models.Course;
 import space.irsi7.models.Student;
+import space.irsi7.models.Theme;
 
 import java.io.*;
 import java.util.*;
@@ -33,12 +35,29 @@ public class YamlDAO {
         return readYamlStudentsArray(path).stream().collect(Collectors.toMap(Student::getId, s -> s));
     }
 
-    public Config readYamlConfig(String path) throws IOException {
+    public void readYamlConfig(String path ,
+                               Map<Integer, Course> courseMap,
+                               Map<Integer, Theme> themeMap) throws IOException {
         Yaml yaml = new Yaml();
         InputStream inputStream = this.getClass()
                 .getClassLoader()
                 .getResourceAsStream(path);
-        return yaml.loadAs(inputStream, Config.class);
+        LinkedHashMap<String, Object> test = yaml.load(inputStream);
+        try {
+            // Заполнение мапы themeMap
+            ((ArrayList) test.get("courses")).forEach(c -> {
+                Course course = Course.constructCourse((LinkedHashMap) c);
+                courseMap.put(course.getId(), course);
+            });
+            // Заполнение мапы themeMap
+            ((ArrayList) test.get("themes")).forEach(c -> {
+                Theme theme = new Theme((LinkedHashMap) c);
+                themeMap.put(theme.getId(), theme);
+            });
+        } catch (ClassCastException e) {
+            //TODO: Написать осмысленное сообщение
+            throw new IllegalInitialDataException("Ошибка");
+        }
     }
 
 }

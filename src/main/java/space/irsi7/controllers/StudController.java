@@ -17,26 +17,21 @@ public class StudController {
 
     static StudentService studentService;
 
+    //TODO: Выбрасывать свой Exception возможно унаследованный от RunTimeException
     static {
-        try {
-            studentService = new StudentService();
-        } catch (IllegalInitialDataException e) {
-            throw new RuntimeException(e);
-        }
+        studentService = new StudentService();
     }
 
     static Scanner in = new Scanner(System.in);
 
     public static boolean start() {
 
-        // TODO: Спросить насчёт new MenuEnum[]
         MultipleChoiceMenu multipleChoiceMenu = new MultipleChoiceMenu(new MenuEnum[]{
                 MenuEnum.MAIN_ADD, MenuEnum.MAIN_REMOVE, MenuEnum.MAIN_RATE, MenuEnum.MAIN_TIME_LEFT,
                 MenuEnum.MAIN_DROP_CHANCE, MenuEnum.MAIN_REPORT_ONE, MenuEnum.MAIN_REPORT_ALL
         });
 
         int choice = multipleChoiceMenu.chooseOne();
-        System.out.println("Успешно");
         if(choice == MenuEnum.MAIN_ADD.ordinal()){
             add();
         }
@@ -164,7 +159,7 @@ public class StudController {
             stream.close();
         } catch (FileNotFoundException e) {
             System.out.println("Файл для записи не найден");
-            throw new RuntimeException(e);
+            //TODO: Какое исключение выбросить здесь?
         }
     }
 

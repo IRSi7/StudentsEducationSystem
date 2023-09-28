@@ -1,7 +1,7 @@
 ---
 courses:
   - id : 1
-    themesId:
+    themeIds:
       - 0
       - 1
       - 2
@@ -13,7 +13,7 @@ courses:
       - 8
       - 9
   - id: 2
-    themesId:
+    themeIds:
       - 9
       - 8
       - 7

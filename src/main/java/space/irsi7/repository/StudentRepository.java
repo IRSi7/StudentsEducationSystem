@@ -31,8 +31,7 @@ public class StudentRepository {
         return students.get(id);
     }
 
-    public void addStudent(String name, int course) {
-        // TODO: Добавить проверку course
+    public void saveNewStudent(String name, int course) {
         this.students.put(nextId, new Student(nextId, name, course));
         nextId++;
         notifyChanges();
@@ -40,7 +39,7 @@ public class StudentRepository {
 
     public void rateStudent(int studentId, int mark) {
         if (mark > 0 && mark < 101) {
-            students.get(studentId).getEduMarks().add(mark);
+            students.get(studentId).getMarks().add(mark);
             students.get(studentId).recountGPA();
             notifyChanges();
         } else {
