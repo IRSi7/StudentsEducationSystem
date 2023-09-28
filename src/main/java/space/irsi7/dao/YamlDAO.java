@@ -30,23 +30,20 @@ public class YamlDAO {
     }
 
 
-    public Map<Integer, Student> readYamlStudents(String path) throws IOException {
-        var test = readYamlStudentsArray(path);
+    public Map<Integer, Student> getStudentsMap(String path) throws IOException {
         return readYamlStudentsArray(path).stream().collect(Collectors.toMap(Student::getId, s -> s));
     }
 
     public void readYamlConfig(String path ,
                                Map<Integer, Course> courseMap,
                                Map<Integer, Theme> themeMap) throws IOException {
-        Yaml yaml = new Yaml();
-        InputStream inputStream = this.getClass()
-                .getClassLoader()
-                .getResourceAsStream(path);
-        LinkedHashMap<String, Object> test = yaml.load(inputStream);
+        LinkedHashMap<String, Object> test = mapper.readValue(new File(path), new TypeReference<>() {} );
+        System.out.println("Success");
         try {
-            // Заполнение мапы themeMap
+            // Заполнение мапы courseMap
+            //TODO: Спросить можно ли сделать так, чтобы IDEA не ругалась на unchecked cast
             ((ArrayList) test.get("courses")).forEach(c -> {
-                Course course = Course.constructCourse((LinkedHashMap) c);
+                Course course = new Course((LinkedHashMap) c);
                 courseMap.put(course.getId(), course);
             });
             // Заполнение мапы themeMap

@@ -47,12 +47,11 @@ public class Theme {
         this.hours = hours;
     }
 
+    //TODO:Спросить про возможность выноса этого метода в абстрактный класс
     public Theme(LinkedHashMap theme){
-        var test = this.getClass().getFields();
         Arrays.stream(this.getClass().getFields()).forEach( field -> {
             System.out.println(field.getName());
             if(theme.containsKey(field.getName())){
-                //setter.setValue(answer, theme.get(setter.name()));
                 try {
                     field.set(this, theme.get(field.getName()));
                 } catch (IllegalAccessException e) {
@@ -62,37 +61,5 @@ public class Theme {
                 throw new IllegalInitialDataException("Ошибка при чтении переменной " + field.getName() + " из класса " + Theme.class.getName());
             }
         });
-//        Arrays.stream(ThemeSettersEnum.values()).forEach(setter -> {
-//            if(theme.containsKey(setter.name())){
-//                //setter.setValue(answer, theme.get(setter.name()));
-//                Method method = this.getClass().getField();
-//            } else {
-//                throw new IllegalInitialDataException("Ошибка при чтении переменной " + setter.name() + " из класса " + Theme.class.getName());
-//            }
-//        });
-    }
-
-    // Содержит названия переменных класса, а также
-    enum ThemeSettersEnum {
-        id {
-            @Override
-            void setValue(Theme theme, Object value) {
-                theme.setId((Integer) value);
-            }
-        },
-        name {
-            @Override
-            void setValue(Theme theme, Object value) {
-                theme.setName((String) value);
-            }
-        },
-        hours {
-            @Override
-            void setValue(Theme theme, Object value) {
-                theme.setHours((Integer) value);
-            }
-        };
-
-        abstract void setValue(Theme theme, Object value);
     }
 }

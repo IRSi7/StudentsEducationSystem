@@ -8,8 +8,8 @@ import java.util.LinkedHashMap;
 
 public class Course {
 
-    private int id;
-    private ArrayList<Integer> themeIds;
+    public int id;
+    public ArrayList<Integer> themeIds;
 
     public Course(int id, ArrayList<Integer> themeIds){
         this.id = id;
@@ -37,33 +37,19 @@ public class Course {
         this.themeIds = themeIds;
     }
 
-    public static Course constructCourse (LinkedHashMap course){
-        Course answer = new Course();
-        Arrays.stream(CourseSettersEnum.values()).forEach(setter -> {
-            if(course.containsKey(setter.name())){
-                setter.setValue(answer, course.get(setter.name()));
+    //TODO:Спросить про возможность выноса этого метода в абстрактный класс
+    public Course(LinkedHashMap theme){
+        Arrays.stream(this.getClass().getFields()).forEach( field -> {
+            System.out.println(field.getName());
+            if(theme.containsKey(field.getName())){
+                try {
+                    field.set(this, theme.get(field.getName()));
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
             } else {
-                //TODO: Спросить про исключения в потоках. Не получается бросить checked exception
-                throw new IllegalInitialDataException("Ошибка при чтении переменной " + setter.name() + " из класса " + Course.class.getName());
+                throw new IllegalInitialDataException("Ошибка при чтении переменной " + field.getName() + " из класса " + this.getClass().getName());
             }
         });
-        return answer;
-    }
-
-    enum CourseSettersEnum {
-        id {
-            @Override
-            void setValue(Course course, Object value) {
-                course.setId((Integer) value);
-            }
-        },
-        themeIds {
-            @Override
-            void setValue(Course course, Object value) {
-                course.setThemeIds((ArrayList<Integer>) value);
-            }
-        };
-
-        abstract void setValue(Course course, Object value);
     }
 }

@@ -19,7 +19,7 @@ public class StudentRepository {
 
     public StudentRepository() throws IOException {
         this.yamlDAO = new YamlDAO();
-        students = yamlDAO.readYamlStudents(PathsEnum.STUDENTS.getPath());
+        students = yamlDAO.getStudentsMap(PathsEnum.STUDENTS.getPath());
         nextId = students.keySet().stream().reduce(Integer::max).get() + 1;
     }
 
