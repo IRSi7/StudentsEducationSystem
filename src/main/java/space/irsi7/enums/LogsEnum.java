@@ -2,8 +2,8 @@ package space.irsi7.enums;
 
 public enum LogsEnum {
 
-    SUCCESS("Операция прошла успешно"),
-    FAIL("Ошибка в введённых данных");
+    INSERT_SUCCESS("Операция прошла успешно"),
+    INSERT_FAIL("Ошибка в введённых данных");
 
     private final String message;
 

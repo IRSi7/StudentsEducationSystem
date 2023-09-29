@@ -43,7 +43,7 @@ public class StudentRepository {
             students.get(studentId).recountGPA();
             notifyChanges();
         } else {
-            System.out.println(LogsEnum.FAIL.getMessage());
+            System.out.println(LogsEnum.INSERT_FAIL.getMessage());
         }
     }
 
@@ -58,9 +58,9 @@ public class StudentRepository {
     private void notifyChanges() {
         try {
             yamlDAO.writeYAML(new ArrayList<>(students.values()), PathsEnum.STUDENTS.getPath());
-            System.out.println(LogsEnum.SUCCESS.getMessage());
+            System.out.println(LogsEnum.INSERT_SUCCESS.getMessage());
         } catch (IOException e) {
-            System.out.println(LogsEnum.FAIL.getMessage());
+            System.out.println(LogsEnum.INSERT_FAIL.getMessage());
         }
     }
 

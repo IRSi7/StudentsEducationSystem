@@ -30,6 +30,7 @@ public class StudController {
         });
 
         int choice = multipleChoiceMenu.chooseOne();
+
         if(choice == MenuEnum.MAIN_ADD.ordinal()){
             add();
         }

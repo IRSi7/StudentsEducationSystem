@@ -35,7 +35,7 @@ public class StudentService {
             yamlDAO.readYamlConfig(PathsEnum.CONFIG.getPath(), courses, themes);
             System.out.println("Считывание данных прошло успешно");
         } catch (ExceptionInInitializerError | IOException e) {
-            throw new IllegalInitialDataException("Ошибка при чтении файл config.yaml");
+            throw new IllegalInitialDataException("Ошибка при чтении файла config.yaml");
         }
     }
 
