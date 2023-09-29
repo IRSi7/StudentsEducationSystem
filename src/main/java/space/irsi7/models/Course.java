@@ -1,12 +1,11 @@
 package space.irsi7.models;
 
 import space.irsi7.exceptions.IllegalInitialDataException;
+import space.irsi7.interfaces.Readable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
+import java.util.*;
 
-public class Course {
+public class Course extends Readable {
 
     public int id;
     public ArrayList<Integer> themeIds;
@@ -17,8 +16,11 @@ public class Course {
     }
 
     public Course(){
-        this.id = 0;
-        this.themeIds = new ArrayList<>();
+        super();
+    }
+
+    public Course(Map<?, ?> course){
+        super(course);
     }
 
     public int getId() {
@@ -38,18 +40,18 @@ public class Course {
     }
 
     //TODO:Спросить про возможность выноса этого метода в абстрактный класс
-    public Course(LinkedHashMap theme){
-        Arrays.stream(this.getClass().getFields()).forEach( field -> {
-            System.out.println(field.getName());
-            if(theme.containsKey(field.getName())){
-                try {
-                    field.set(this, theme.get(field.getName()));
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException(e);
-                }
-            } else {
-                throw new IllegalInitialDataException("Ошибка при чтении переменной " + field.getName() + " из класса " + this.getClass().getName());
-            }
-        });
-    }
+//    public Course(Map<String, Object> theme){
+//        Arrays.stream(this.getClass().getFields()).forEach( field -> {
+//            System.out.println(field.getName());
+//            if(theme.containsKey(field.getName())){
+//                try {
+//                    field.set(this, theme.get(field.getName()));
+//                } catch (IllegalAccessException e) {
+//                    throw new RuntimeException(e);
+//                }
+//            } else {
+//                throw new IllegalInitialDataException("Ошибка при чтении переменной " + field.getName() + " из класса " + this.getClass().getName());
+//            }
+//        });
+//    }
 }

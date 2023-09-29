@@ -1,12 +1,14 @@
 package space.irsi7.models;
 
 import space.irsi7.exceptions.IllegalInitialDataException;
+import space.irsi7.interfaces.Readable;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
-public class Theme {
+public class Theme extends Readable {
     public int id;
     public String name;
     public int hours;
@@ -21,6 +23,10 @@ public class Theme {
         this.id = id;
         this.name = name;
         this.hours = hours;
+    }
+
+    public Theme(Map<?, ?> theme){
+        super(theme);
     }
 
     public int getId() {
@@ -48,18 +54,18 @@ public class Theme {
     }
 
     //TODO:Спросить про возможность выноса этого метода в абстрактный класс
-    public Theme(LinkedHashMap theme){
-        Arrays.stream(this.getClass().getFields()).forEach( field -> {
-            System.out.println(field.getName());
-            if(theme.containsKey(field.getName())){
-                try {
-                    field.set(this, theme.get(field.getName()));
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException(e);
-                }
-            } else {
-                throw new IllegalInitialDataException("Ошибка при чтении переменной " + field.getName() + " из класса " + Theme.class.getName());
-            }
-        });
-    }
+//    public Theme(LinkedHashMap theme){
+//        Arrays.stream(this.getClass().getFields()).forEach( field -> {
+//            System.out.println(field.getName());
+//            if(theme.containsKey(field.getName())){
+//                try {
+//                    field.set(this, theme.get(field.getName()));
+//                } catch (IllegalAccessException e) {
+//                    throw new RuntimeException(e);
+//                }
+//            } else {
+//                throw new IllegalInitialDataException("Ошибка при чтении переменной " + field.getName() + " из класса " + Theme.class.getName());
+//            }
+//        });
+//    }
 }

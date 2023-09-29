@@ -34,27 +34,26 @@ public class YamlDAO {
         return readYamlStudentsArray(path).stream().collect(Collectors.toMap(Student::getId, s -> s));
     }
 
-    public void readYamlConfig(String path ,
+    public void readYamlConfig(String path,
                                Map<Integer, Course> courseMap,
                                Map<Integer, Theme> themeMap) throws IOException {
-        LinkedHashMap<String, Object> test = mapper.readValue(new File(path), new TypeReference<>() {} );
+        Map<String, List<?>> configFile = mapper.readValue(new File(path), new TypeReference<>() {
+        });
         System.out.println("Success");
-        try {
-            // Заполнение мапы courseMap
-            //TODO: Спросить можно ли сделать так, чтобы IDEA не ругалась на unchecked cast
-            ((ArrayList) test.get("courses")).forEach(c -> {
-                Course course = new Course((LinkedHashMap) c);
+        // Заполнение мапы courseMap
+        configFile.get("courses").forEach(sc -> {
+            if (sc instanceof Map<?, ?> someClass) {
+                Course course = new Course(someClass);
                 courseMap.put(course.getId(), course);
-            });
-            // Заполнение мапы themeMap
-            ((ArrayList) test.get("themes")).forEach(c -> {
-                Theme theme = new Theme((LinkedHashMap) c);
-                themeMap.put(theme.getId(), theme);
-            });
-        } catch (ClassCastException e) {
-            //TODO: Написать осмысленное сообщение
-            throw new IllegalInitialDataException("Ошибка");
-        }
-    }
+            }
+        });
 
+        // Заполнение мапы themeMap
+        configFile.get("themes").forEach(sc -> {
+            if (sc instanceof Map<?, ?> someClass) {
+                Theme theme = new Theme(someClass);
+                themeMap.put(theme.getId(), theme);
+            }
+        });
+    }
 }
