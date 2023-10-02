@@ -14,10 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 import java.util.stream.IntStream;
 
 public class StudentService {
@@ -93,7 +90,6 @@ public class StudentService {
         ArrayList<String> answer = new ArrayList<>();
 
         ExecutorService service = Executors.newFixedThreadPool(studentRepository.getStudents().size());
-        ArrayList<Future<?>> taskList = new ArrayList<>();
 
         studentRepository.getStudents().values().stream()
                 .filter(s -> {
@@ -120,19 +116,18 @@ public class StudentService {
                     }
                     return 0;
                 })
-                .forEach(s ->  taskList.add( service.submit((Runnable) () ->
-                        answer.add(s.toString()))));
+                .forEach(s ->  service.submit((Runnable) () ->
+                        answer.add(s.toString())));
 
         if (order == MenuEnum.ORDER_REVERSED.ordinal()) {
             Collections.reverse(answer);
         }
-        taskList.forEach(s -> {
-            try {
-                s.get();
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        service.shutdown();
+        try {
+            final boolean done = service.awaitTermination(1, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         return answer;
     }
 

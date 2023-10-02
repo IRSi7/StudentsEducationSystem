@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import org.yaml.snakeyaml.Yaml;
-import space.irsi7.exceptions.IllegalInitialDataException;
 import space.irsi7.models.Course;
 import space.irsi7.models.Student;
 import space.irsi7.models.Theme;
@@ -19,7 +18,7 @@ public class YamlDAO {
     ObjectMapper mapper = new YAMLMapper().enable(SerializationFeature.INDENT_OUTPUT);
     Yaml yaml = new Yaml();
 
-    public void writeYAML(ArrayList arrayList, String path) throws IOException {
+    public void writeYAML(List<Object> arrayList, String path) throws IOException {
         FileWriter writer = new FileWriter(path);
         yaml.dump(arrayList, writer);
     }

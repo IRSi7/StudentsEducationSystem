@@ -1,6 +1,5 @@
 package space.irsi7.models;
 
-import space.irsi7.exceptions.IllegalInitialDataException;
 import space.irsi7.interfaces.Readable;
 
 import java.util.*;

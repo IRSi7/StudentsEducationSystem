@@ -1,11 +1,6 @@
 package space.irsi7.models;
 
-import space.irsi7.exceptions.IllegalInitialDataException;
 import space.irsi7.interfaces.Readable;
-
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Theme extends Readable {
