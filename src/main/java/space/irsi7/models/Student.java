@@ -1,6 +1,7 @@
 package space.irsi7.models;
 
 import java.util.ArrayList;
+
 import static java.lang.Math.round;
 
 public class Student {
@@ -68,7 +69,7 @@ public class Student {
         recountGPA();
     }
 
-    public Student(){
+    public Student() {
         this.id = 0;
         this.name = null;
         this.courseId = 0;
@@ -78,19 +79,14 @@ public class Student {
 
     @Override
     public String toString() {
-        try {
-            Thread.sleep(2000);
-            return " ID : " + id + " | Студент : " + name
-                    + " | Кол-во сданных тестов : " + marks.size()
-                    + " | Средний балл : " + gpa
-                    + " | Оценка успеваемости : "
-                    + ((gpa >= 75) ? "Низкая вероятность быть отчисленным" : "Высокая вероятность быть отчисленным");
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        return " ID : " + id + " | Студент : " + name
+                + " | Кол-во сданных тестов : " + marks.size()
+                + " | Средний балл : " + gpa
+                + " | Оценка успеваемости : "
+                + ((gpa >= 75) ? "Низкая вероятность быть отчисленным" : "Высокая вероятность быть отчисленным");
     }
 
-    public void recountGPA(){
+    public void recountGPA() {
         if (!this.marks.isEmpty()) {
             this.gpa = round((float) marks.stream().mapToInt(it -> it).sum() / this.marks.size());
         } else {

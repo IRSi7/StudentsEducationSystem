@@ -1,5 +1,7 @@
 package space.irsi7.services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import space.irsi7.dao.YamlDAO;
 import space.irsi7.enums.MenuEnum;
 import space.irsi7.enums.PathsEnum;
@@ -10,10 +12,7 @@ import space.irsi7.models.Theme;
 import space.irsi7.repository.StudentRepository;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.IntStream;
 
@@ -23,20 +22,20 @@ public class StudentService {
     final Map<Integer, Course> courses;
     final Map<Integer, Theme> themes;
 
+    private static final Logger logger = LoggerFactory.getLogger(StudentService.class);
+
     public StudentService() throws IllegalInitialDataException {
-        try {
-            studentRepository = new StudentRepository();
-        } catch (ExceptionInInitializerError | IOException e) {
-            throw new IllegalInitialDataException("Ошибка при чтении файла students.yaml");
-        }
+        studentRepository = new StudentRepository();
         try {
             var yamlDAO = new YamlDAO();
             themes = new HashMap<>();
             courses = new HashMap<>();
             yamlDAO.readYamlConfig(PathsEnum.CONFIG.getPath(), courses, themes);
-            System.out.println("Считывание данных прошло успешно");
+            logger.info("Данные о темах и курсах успешно считаны из config.yaml");
         } catch (ExceptionInInitializerError | IOException e) {
-            throw new IllegalInitialDataException("Ошибка при чтении файла config.yaml");
+            logger.error("Ошибка при чтении файла config.yaml");
+            throw new IllegalInitialDataException("Ошибка при чтении файла config.yaml", e);
+
         }
     }
 
@@ -86,49 +85,62 @@ public class StudentService {
     }
 
     public ArrayList<String> getAllReport(int sort, int order, int filter) {
-
-        ArrayList<String> answer = new ArrayList<>();
-
-        ExecutorService service = Executors.newFixedThreadPool(studentRepository.getStudents().size());
-
-        studentRepository.getStudents().values().stream()
-                .filter(s -> {
-                    if (filter == MenuEnum.FILTER_LOW.ordinal()) {
-                        return s.getGpa() < 75;
-                    }
-                    if (filter == MenuEnum.FILTER_HIGH.ordinal()) {
-                        return s.getGpa() >= 75;
-                    }
-                    return true;
-                })
-                .sorted((Student s, Student s1) -> {
-                    if (sort == MenuEnum.SORT_ID.ordinal()) {
-                        return Integer.compare(s.getId(), s1.getId());
-                    }
-                    if (sort == MenuEnum.SORT_NAME.ordinal()) {
-                        return s.getName().compareTo(s1.getName());
-                    }
-                    if (sort == MenuEnum.SORT_TESTS_PASSED.ordinal()) {
-                        return Integer.compare(s.getMarks().size(), s1.getMarks().size());
-                    }
-                    if (sort == MenuEnum.SORT_GPA.ordinal()) {
-                        return Integer.compare(s.getGpa(), s1.getGpa());
-                    }
-                    return 0;
-                })
-                .forEach(s ->  service.submit((Runnable) () ->
-                        answer.add(s.toString())));
-
-        if (order == MenuEnum.ORDER_REVERSED.ordinal()) {
-            Collections.reverse(answer);
-        }
-        service.shutdown();
         try {
-            final boolean done = service.awaitTermination(1, TimeUnit.MINUTES);
+            CopyOnWriteArrayList<Student> sortedStudents = new CopyOnWriteArrayList<>();
+            ArrayList<String> answer = new ArrayList<>();
+
+            ExecutorService service = Executors.newFixedThreadPool(studentRepository.getStudents().size());
+
+            studentRepository.getStudents().values().stream()
+                    .filter(s -> {
+                        if (filter == MenuEnum.FILTER_LOW.ordinal()) {
+                            return s.getGpa() < 75;
+                        }
+                        if (filter == MenuEnum.FILTER_HIGH.ordinal()) {
+                            return s.getGpa() >= 75;
+                        }
+                        return true;
+                    })
+                    .forEach(s -> service.submit(() -> {
+                        try {
+                            Thread.sleep(3000);
+                            sortedStudents.add(s);
+                            logger.info("Поток сбора информации о студенте {} успешно завершён", s.getId());
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }));
+
+            service.shutdown();
+
+            boolean done = service.awaitTermination(1, TimeUnit.MINUTES);
+            logger.info("Формирование общего списка студентов успешно завершено");
+            sortedStudents.stream()
+                    .sorted((Student s, Student s1) -> {
+                        if (sort == MenuEnum.SORT_ID.ordinal()) {
+                            return Integer.compare(s.getId(), s1.getId());
+                        }
+                        if (sort == MenuEnum.SORT_NAME.ordinal()) {
+                            return s.getName().compareTo(s1.getName());
+                        }
+                        if (sort == MenuEnum.SORT_TESTS_PASSED.ordinal()) {
+                            return Integer.compare(s.getMarks().size(), s1.getMarks().size());
+                        }
+                        if (sort == MenuEnum.SORT_GPA.ordinal()) {
+                            return Integer.compare(s.getGpa(), s1.getGpa());
+                        }
+                        return 0;
+                    })
+                    .forEach(s -> answer.add(s.toString()));
+
+            if (order == MenuEnum.ORDER_REVERSED.ordinal()) {
+                Collections.reverse(answer);
+            }
+
+            return answer;
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        return answer;
     }
 
     public boolean validateId(int id) {
