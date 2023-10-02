@@ -78,11 +78,16 @@ public class Student {
 
     @Override
     public String toString() {
-        return " ID : " + id + " | Студент : " + name
-                + " | Кол-во сданных тестов : " + marks.size()
-                + " | Средний балл : " + gpa
-                + " | Оценка успеваемости : "
-                + ((gpa >= 75) ? "Низкая вероятность быть отчисленным" : "Высокая вероятность быть отчисленным");
+        try {
+            Thread.sleep(2000);
+            return " ID : " + id + " | Студент : " + name
+                    + " | Кол-во сданных тестов : " + marks.size()
+                    + " | Средний балл : " + gpa
+                    + " | Оценка успеваемости : "
+                    + ((gpa >= 75) ? "Низкая вероятность быть отчисленным" : "Высокая вероятность быть отчисленным");
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void recountGPA(){

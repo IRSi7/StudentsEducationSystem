@@ -44,7 +44,7 @@ public class YamlDAO {
         configFile.get("courses").forEach(sc -> {
             if (sc instanceof Map<?, ?> someClass) {
                 Course course = new Course(someClass);
-                courseMap.put(course.getId(), course);
+                courseMap.put(course.id, course);
             }
         });
 
@@ -52,7 +52,7 @@ public class YamlDAO {
         configFile.get("themes").forEach(sc -> {
             if (sc instanceof Map<?, ?> someClass) {
                 Theme theme = new Theme(someClass);
-                themeMap.put(theme.getId(), theme);
+                themeMap.put(theme.id, theme);
             }
         });
     }

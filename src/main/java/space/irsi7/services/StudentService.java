@@ -14,6 +14,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.stream.IntStream;
 
 public class StudentService {
@@ -54,7 +58,7 @@ public class StudentService {
     public int getEduTimeLeft(int studentId) {
         Student curStudent = studentRepository.getStudent(studentId);
         int passed = curStudent.getMarks().size();
-        int all = courses.get(curStudent.getCourseId()).getThemeIds().size();
+        int all = courses.get(curStudent.getCourseId()).themeIds.size();
         return (all - passed);
     }
 
@@ -68,10 +72,10 @@ public class StudentService {
         answer.append("Тесты:\n");
 
         IntStream.range(0, curStudent.getMarks().size())
-                .forEach( i -> answer.append("\t").append(i + 1)
+                .forEach(i -> answer.append("\t").append(i + 1)
                         .append(". | Тема: ")
                         .append(themes.get(courses.get(curStudent.getCourseId())
-                                .getThemeIds().get(i)).getName())
+                                .themeIds.get(i)).name)
                         .append(" | Оценка: ")
                         .append(studentRepository.getStudent(studId).getMarks().get(i))
                         .append(" |\n"));
@@ -88,42 +92,52 @@ public class StudentService {
 
         ArrayList<String> answer = new ArrayList<>();
 
+        ExecutorService service = Executors.newFixedThreadPool(studentRepository.getStudents().size());
+        ArrayList<Future<?>> taskList = new ArrayList<>();
+
         studentRepository.getStudents().values().stream()
-                .filter( s -> {
-                    if(filter == MenuEnum.FILTER_LOW.ordinal()){
+                .filter(s -> {
+                    if (filter == MenuEnum.FILTER_LOW.ordinal()) {
                         return s.getGpa() < 75;
                     }
-                    if(filter == MenuEnum.FILTER_HIGH.ordinal()){
+                    if (filter == MenuEnum.FILTER_HIGH.ordinal()) {
                         return s.getGpa() >= 75;
                     }
                     return true;
                 })
                 .sorted((Student s, Student s1) -> {
-                    if(sort == MenuEnum.SORT_ID.ordinal()){
+                    if (sort == MenuEnum.SORT_ID.ordinal()) {
                         return Integer.compare(s.getId(), s1.getId());
                     }
-                    if(sort == MenuEnum.SORT_NAME.ordinal()){
+                    if (sort == MenuEnum.SORT_NAME.ordinal()) {
                         return s.getName().compareTo(s1.getName());
                     }
-                    if(sort == MenuEnum.SORT_TESTS_PASSED.ordinal()){
+                    if (sort == MenuEnum.SORT_TESTS_PASSED.ordinal()) {
                         return Integer.compare(s.getMarks().size(), s1.getMarks().size());
                     }
-                    if(sort == MenuEnum.SORT_GPA.ordinal()){
+                    if (sort == MenuEnum.SORT_GPA.ordinal()) {
                         return Integer.compare(s.getGpa(), s1.getGpa());
                     }
                     return 0;
                 })
-                .toList()
-                .forEach( s -> answer.add(s.toString()));
+                .forEach(s ->  taskList.add( service.submit((Runnable) () ->
+                        answer.add(s.toString()))));
 
         if (order == MenuEnum.ORDER_REVERSED.ordinal()) {
             Collections.reverse(answer);
         }
+        taskList.forEach(s -> {
+            try {
+                s.get();
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+        });
         return answer;
     }
 
-    public boolean validateId(int id){
-        if(studentRepository.containsStudent(id)){
+    public boolean validateId(int id) {
+        if (studentRepository.containsStudent(id)) {
             return true;
         } else {
             System.out.println("Студента с таким ID не существует");

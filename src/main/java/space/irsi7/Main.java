@@ -7,6 +7,9 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) {
-        while(StudController.start());
+        boolean isStarted = true;
+        while(isStarted){
+            isStarted = StudController.start();
+        }
     }
 }

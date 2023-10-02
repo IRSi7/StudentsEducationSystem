@@ -13,12 +13,6 @@ public class Theme extends Readable {
     public String name;
     public int hours;
 
-    public Theme() {
-        this.id = 0;
-        this.name = null;
-        this.hours = 0;
-    }
-
     public Theme(int id, String name, int hours) {
         this.id = id;
         this.name = name;
@@ -28,44 +22,4 @@ public class Theme extends Readable {
     public Theme(Map<?, ?> theme){
         super(theme);
     }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getHours() {
-        return hours;
-    }
-
-    public void setHours(int hours) {
-        this.hours = hours;
-    }
-
-    //TODO:Спросить про возможность выноса этого метода в абстрактный класс
-//    public Theme(LinkedHashMap theme){
-//        Arrays.stream(this.getClass().getFields()).forEach( field -> {
-//            System.out.println(field.getName());
-//            if(theme.containsKey(field.getName())){
-//                try {
-//                    field.set(this, theme.get(field.getName()));
-//                } catch (IllegalAccessException e) {
-//                    throw new RuntimeException(e);
-//                }
-//            } else {
-//                throw new IllegalInitialDataException("Ошибка при чтении переменной " + field.getName() + " из класса " + Theme.class.getName());
-//            }
-//        });
-//    }
 }
